@@ -84,6 +84,20 @@
     background: var(--rc-bg); color: var(--rc-text-2); font: inherit; cursor: pointer;
   }
   .clear:hover { background: var(--rc-surface); }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --rc-bg: #101013;
+      --rc-surface: #1b1b1f;
+      --rc-border: #2e2e33;
+      --rc-text: #f2f2f5;
+      --rc-text-2: #b4b4bd;
+      --rc-text-3: #7c7c86;
+    }
+    .switch[aria-checked="true"] { background: #12281a; }
+    .heat i { background: #2a2a2f; }
+  }
+
   @media (prefers-reduced-motion: reduce) { .switch, .switch .dot { transition: none; } }
 </style>
 

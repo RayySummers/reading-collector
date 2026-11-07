@@ -99,6 +99,38 @@
     return pick.replace(/\s+/g, " ").trim();
   }
 
+  /* ---------- 深色 / 反色适配 ---------- */
+  function pageIsInverted() {
+    const f1 = getComputedStyle(document.documentElement).filter || "";
+    const f2 = document.body ? getComputedStyle(document.body).filter || "" : "";
+    return /invert\(/.test(f1) || /invert\(/.test(f2);
+  }
+
+  function pageIsDark() {
+    try {
+      if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) return true;
+    } catch (e) {}
+    const h = document.documentElement;
+    if (h.classList.contains("skin-theme-clientpref-night") || h.classList.contains("night")) return true;
+    if ((h.dataset.theme || "").toLowerCase() === "dark") return true;
+    if (document.body) {
+      const bg = getComputedStyle(document.body).backgroundColor;
+      const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (m) {
+        const lum = (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
+        if (lum < 0.35) return true;
+      }
+    }
+    return false;
+  }
+
+  function adaptTheme(el) {
+    if (!el) return el;
+    if (pageIsDark()) el.classList.add("rc-dark");
+    if (pageIsInverted()) el.classList.add("rc-invert-fix");
+    return el;
+  }
+
   /* ---------- 浮层 ---------- */
   function removeBar() {
     if (bar) bar.remove();
@@ -109,6 +141,7 @@
     const el = document.createElement("div");
     el.className = "rc-toast" + (bad ? " rc-toast--bad" : "");
     el.textContent = msg;
+    adaptTheme(el);
     document.documentElement.appendChild(el);
     setTimeout(() => el.remove(), 1500);
   }
@@ -140,6 +173,7 @@
       if (e.key === "Escape") closePopover();
     });
 
+    adaptTheme(pop);
     document.documentElement.appendChild(pop);
     const w = pop.offsetWidth || 280;
     const left = Math.max(8, Math.min(anchorRect.left + window.scrollX, window.innerWidth - w - 12));
@@ -163,6 +197,7 @@
       b.addEventListener("click", () => commit(k));
       bar.appendChild(b);
     });
+    adaptTheme(bar);
     document.documentElement.appendChild(bar);
     if (pending && pending.rect) {
       bar.style.left = Math.max(8, pending.rect.left + window.scrollX) + "px";
@@ -313,6 +348,7 @@
       pushBtn = document.createElement("button");
       pushBtn.className = "rc-push";
       pushBtn.addEventListener("click", doPush);
+      adaptTheme(pushBtn);
       document.documentElement.appendChild(pushBtn);
     }
     pushBtn.textContent = "推送 " + n + " 条 → Obsidian";

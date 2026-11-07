@@ -180,6 +180,59 @@ mark.rc-fact {
   background: #7f1d1d;
 }
 
+
+/* ---------- 深色模式 ---------- */
+@media (prefers-color-scheme: dark) {
+  .rc-pop {
+    background: #17171a;
+    color: #f2f2f5;
+    border-color: #2e2e33;
+  }
+  .rc-pop-quote {
+    color: #b4b4bd;
+    border-left-color: #3a3a40;
+  }
+  .rc-pop-note {
+    background: #101013;
+    color: #f2f2f5;
+    border-color: #3a3a40;
+  }
+  .rc-pop-actions button {
+    background: #232327;
+    color: #f2f2f5;
+    border-color: #3a3a40;
+  }
+  .rc-pop-actions .rc-pop-save {
+    background: #f2f2f5;
+    color: #111113;
+    border-color: #f2f2f5;
+  }
+  .rc-pop-actions .rc-pop-del {
+    background: #2a1515;
+    color: #fca5a5;
+    border-color: #4c1d1d;
+  }
+  .rc-pop-x { color: #a1a1aa; }
+}
+
+
+/* 页面级深色（不依赖系统偏好）：给插件 UI 挂 .rc-dark */
+.rc-dark .rc-pop {
+  background: #17171a; color: #f2f2f5; border-color: #2e2e33;
+}
+.rc-dark.rc-pop, .rc-dark .rc-pop-quote { }
+.rc-dark .rc-pop-quote { color: #b4b4bd; border-left-color: #3a3a40; }
+.rc-dark .rc-pop-note { background: #101013; color: #f2f2f5; border-color: #3a3a40; }
+.rc-dark .rc-pop-actions button { background: #232327; color: #f2f2f5; border-color: #3a3a40; }
+.rc-dark .rc-pop-actions .rc-pop-save { background: #f2f2f5; color: #111113; border-color: #f2f2f5; }
+.rc-dark .rc-pop-actions .rc-pop-del { background: #2a1515; color: #fca5a5; border-color: #4c1d1d; }
+.rc-dark .rc-pop-x { color: #a1a1aa; }
+
+/* 页面整体被 filter 反色时，给自己的 UI 反向抵消 */
+.rc-invert-fix {
+  filter: invert(1) hue-rotate(180deg) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rc-btn {
     transition: none;
