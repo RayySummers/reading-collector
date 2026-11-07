@@ -66,44 +66,20 @@
     return r;
   }
 
-  // 跨段落选择时不能把整段塞进一个 <mark>（会破坏渲染），
-  // 改成按文本节点逐段包裹，所有片段共用同一个 rcId。
+  // 单块内包裹：只处理一个 range，避免跨块破坏排版
   function wrapRange(range, kind, id) {
-    const root = range.commonAncestorContainer;
-    const walker = document.createTreeWalker(
-      root.nodeType === Node.TEXT_NODE ? root.parentNode : root,
-      NodeFilter.SHOW_TEXT,
-      { acceptNode: (n) => (isPageText(n) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT) }
-    );
-    const targets = [];
-    let n;
-    while ((n = walker.nextNode())) {
-      if (!range.intersectsNode(n)) continue;
-      const start = n === range.startContainer ? range.startOffset : 0;
-      const end = n === range.endContainer ? range.endOffset : n.data.length;
-      if (end > start && n.data.slice(start, end).trim()) targets.push([n, start, end]);
+    try {
+      const mark = document.createElement("mark");
+      mark.className = `rc-hl rc-${kind}`;
+      mark.dataset.rcId = id;
+      if (pageIsDark()) mark.classList.add("rc-dark");
+      if (pageIsInverted()) mark.classList.add("rc-invert-fix");
+      mark.appendChild(range.extractContents());
+      range.insertNode(mark);
+      return mark;
+    } catch (e) {
+      return null;
     }
-    if (!targets.length) return null;
-
-    const marks = [];
-    for (const [node, start, end] of targets) {
-      try {
-        const r = document.createRange();
-        r.setStart(node, start);
-        r.setEnd(node, end);
-        const mark = document.createElement("mark");
-        mark.className = `rc-hl rc-${kind}`;
-        mark.dataset.rcId = id;
-        if (pageIsDark()) mark.classList.add("rc-dark");
-        if (pageIsInverted()) mark.classList.add("rc-invert-fix");
-        mark.appendChild(r.extractContents());
-        r.insertNode(mark);
-        marks.push(mark);
-      } catch (e) {
-        /* 单个节点失败就跳过 */
-      }
-    }
-    return marks.length ? marks[0] : null;
   }
 
   function sentenceAround(text) {
@@ -232,8 +208,29 @@
     }
   }
 
+  function spansBlocks(startNode) {
+    // 选区起点和终点若不在同一个块级容器里，就视为跨段
+    const range = rangeFromOffsets(pending.start, pending.end);
+    if (!range) return true;
+    const blockOf = (n) => {
+      let el = n.nodeType === 1 ? n : n.parentElement;
+      while (el && el !== document.body) {
+        const d = getComputedStyle(el).display;
+        if (d === "block" || d === "list-item" || d === "table" || d === "flex") return el;
+        el = el.parentElement;
+      }
+      return document.body;
+    };
+    return blockOf(range.startContainer) !== blockOf(range.endContainer);
+  }
+
   async function commit(kind) {
     if (!pending) return;
+    if (spansBlocks()) {
+      removeBar();
+      toast("跨段落暂不支持，请一段一段标", true);
+      return;
+    }
     const id = "rc" + Date.now().toString(36);
     const range = rangeFromOffsets(pending.start, pending.end);
     removeBar();
