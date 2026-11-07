@@ -277,7 +277,19 @@
         refreshPush();
       }
     );
+    const inBlock = marksInSameBlock(mark);
+    if (inBlock > 3) toast(`本段已标 ${inBlock} 个，建议先读完再补`);
     refreshPush();
+  }
+
+  function marksInSameBlock(el) {
+    let b = el;
+    while (b && b !== document.body) {
+      const d = getComputedStyle(b).display;
+      if (d === "block" || d === "list-item" || d === "table") break;
+      b = b.parentElement;
+    }
+    return b ? b.querySelectorAll("mark.rc-hl").length : 0;
   }
 
   /* ---------- 点已有高亮 ---------- */
