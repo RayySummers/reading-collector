@@ -48,24 +48,6 @@
   background: var(--rc-dark-btn-hover);
 }
 
-/* 高亮 */
-mark.rc-hl {
-  border-radius: 3px;
-  padding: 0 1px;
-  cursor: pointer;
-}
-mark.rc-vocab {
-  background: var(--rc-vocab-bg);
-  color: inherit;
-}
-mark.rc-idea {
-  background: var(--rc-idea-bg);
-  color: inherit;
-}
-mark.rc-fact {
-  background: var(--rc-fact-bg);
-  color: inherit;
-}
 
 /* 网页内浮层 */
 .rc-pop {
@@ -229,22 +211,6 @@ mark.rc-fact {
 .rc-dark .rc-pop-x { color: #a1a1aa; }
 
 
-/* 深色页面：高亮改成半透明高饱和底纹，避免被暗背景吃掉 */
-.rc-dark mark.rc-vocab {
-  background: rgba(34, 197, 94, 0.42);
-  box-shadow: inset 0 -1px 0 rgba(134, 239, 172, 0.85);
-  color: inherit;
-}
-.rc-dark mark.rc-idea {
-  background: rgba(234, 179, 8, 0.42);
-  box-shadow: inset 0 -1px 0 rgba(253, 224, 71, 0.85);
-  color: inherit;
-}
-.rc-dark mark.rc-fact {
-  background: rgba(59, 130, 246, 0.45);
-  box-shadow: inset 0 -1px 0 rgba(147, 197, 253, 0.85);
-  color: inherit;
-}
 
 /* 页面整体被 filter 反色时，给自己的 UI 反向抵消 */
 .rc-invert-fix {
@@ -257,12 +223,24 @@ mark.rc-fact {
   }
 }
 
-/* 可叠加的「笔记层」：用底纹+下划线，不用实色，避免盖住里面的生词高亮 */
-mark.rc-idea {
-  background: rgba(234, 179, 8, 0.16);
-  box-shadow: inset 0 -2px 0 rgba(234, 179, 8, 0.6);
+
+/* ---------- 高亮配色（明暗两套，文字色显式指定） ---------- */
+mark.rc-hl {
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 1px;
+  cursor: pointer;
 }
-.rc-dark mark.rc-idea {
-  background: rgba(234, 179, 8, 0.20);
-  box-shadow: inset 0 -2px 0 rgba(253, 224, 71, 0.7);
-}
+
+/* 浅色页面 */
+mark.rc-vocab { background: #bbf7d0; color: #052e16; }
+mark.rc-idea  { background: #fde68a; color: #422006; }
+mark.rc-fact  { background: #bfdbfe; color: #0c1e3a; }
+
+/* 深色页面：半透明底 + 浅色字（class 加在 mark 自身） */
+mark.rc-vocab.rc-dark { background: rgba(34, 197, 94, 0.40); color: #ecfdf3; }
+mark.rc-idea.rc-dark  { background: rgba(234, 179, 8, 0.38); color: #fffbe6; }
+mark.rc-fact.rc-dark  { background: rgba(59, 130, 246, 0.42); color: #eaf2ff; }
+
+/* 反色页面（页面整体 filter: invert）→ 再翻回来 */
+mark.rc-hl.rc-invert-fix { filter: invert(1) hue-rotate(180deg); }
