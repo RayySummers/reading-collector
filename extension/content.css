@@ -1,0 +1,187 @@
+/* Reading Collector v0.3 —— 页面内 UI（Design tokens 见 DESIGN.md） */
+:root {
+  --rc-vocab: #22c55e;
+  --rc-idea: #eab308;
+  --rc-fact: #3b82f6;
+  --rc-vocab-bg: #dcfce7;
+  --rc-idea-bg: #fef9c3;
+  --rc-fact-bg: #dbeafe;
+  --rc-dark: #111113;
+  --rc-dark-border: rgba(255, 255, 255, 0.14);
+  --rc-dark-btn: rgba(255, 255, 255, 0.06);
+  --rc-dark-btn-hover: rgba(255, 255, 255, 0.16);
+  --rc-r-sm: 8px;
+  --rc-r-md: 12px;
+  --rc-r-full: 999px;
+  --rc-shadow-bar: 0 8px 28px rgba(0, 0, 0, 0.35);
+  --rc-shadow-pop: 0 12px 36px rgba(0, 0, 0, 0.28);
+}
+
+/* 选区工具条 */
+.rc-bar {
+  position: absolute;
+  z-index: 2147483647;
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border-radius: var(--rc-r-md);
+  background: var(--rc-dark);
+  box-shadow: var(--rc-shadow-bar);
+  backdrop-filter: blur(8px);
+  font: 13px/1.2 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+.rc-btn {
+  appearance: none;
+  border: 1px solid var(--rc-dark-border);
+  background: var(--rc-dark-btn);
+  color: #f2f2f5;
+  border-radius: var(--rc-r-sm);
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  font: inherit;
+  transition: background 120ms ease;
+}
+
+.rc-btn:hover {
+  background: var(--rc-dark-btn-hover);
+}
+
+/* 高亮 */
+mark.rc-hl {
+  border-radius: 3px;
+  padding: 0 1px;
+  cursor: pointer;
+}
+mark.rc-vocab {
+  background: var(--rc-vocab-bg);
+  color: inherit;
+}
+mark.rc-idea {
+  background: var(--rc-idea-bg);
+  color: inherit;
+}
+mark.rc-fact {
+  background: var(--rc-fact-bg);
+  color: inherit;
+}
+
+/* 网页内浮层 */
+.rc-pop {
+  position: absolute;
+  z-index: 2147483647;
+  width: 300px;
+  background: #fff;
+  color: #18181b;
+  border-radius: var(--rc-r-md);
+  box-shadow: var(--rc-shadow-pop);
+  border: 1px solid #e4e4e7;
+  padding: 12px;
+  font: 13px/1.5 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+.rc-pop-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.rc-pop-x {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: #a1a1aa;
+}
+
+.rc-pop-quote {
+  color: #52525b;
+  font-size: 12px;
+  border-left: 3px solid #e4e4e7;
+  padding-left: 8px;
+  margin-bottom: 8px;
+  max-height: 54px;
+  overflow: auto;
+}
+
+.rc-pop-note {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  border: 1px solid #e4e4e7;
+  border-radius: var(--rc-r-sm);
+  padding: 8px;
+  font: inherit;
+  color: #18181b;
+}
+
+.rc-pop-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.rc-pop-actions button {
+  border-radius: var(--rc-r-sm);
+  padding: 6px 12px;
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid #e4e4e7;
+  background: #f6f6f7;
+  color: #18181b;
+}
+
+.rc-pop-actions .rc-pop-save {
+  background: #111113;
+  color: #fff;
+  border-color: #111113;
+}
+
+.rc-pop-actions .rc-pop-del {
+  color: #b91c1c;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+/* 推送按钮 */
+.rc-push {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483647;
+  border: none;
+  border-radius: var(--rc-r-full);
+  padding: 11px 16px;
+  background: var(--rc-dark);
+  color: #fff;
+  font: 600 13px -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  box-shadow: var(--rc-shadow-bar);
+  cursor: pointer;
+}
+
+/* 提示 */
+.rc-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 70px;
+  z-index: 2147483647;
+  background: var(--rc-dark);
+  color: #fff;
+  padding: 9px 14px;
+  border-radius: var(--rc-r-md);
+  font: 14px -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  box-shadow: var(--rc-shadow-bar);
+}
+
+.rc-toast--bad {
+  background: #7f1d1d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rc-btn {
+    transition: none;
+  }
+}

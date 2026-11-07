@@ -1,0 +1,125 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Reading Collector</title>
+<style>
+  :root {
+    --rc-bg: #ffffff;
+    --rc-surface: #f6f6f7;
+    --rc-border: #e4e4e7;
+    --rc-text: #18181b;
+    --rc-text-2: #52525b;
+    --rc-text-3: #a1a1aa;
+    --rc-vocab: #22c55e;
+    --rc-idea: #eab308;
+    --rc-fact: #3b82f6;
+    --rc-1: 4px;
+    --rc-2: 8px;
+    --rc-3: 12px;
+    --rc-4: 16px;
+    --rc-5: 20px;
+    --rc-r-sm: 8px;
+    --rc-r-md: 12px;
+    --rc-r-full: 999px;
+    --rc-fs-sm: 12px;
+    --rc-fs-md: 13px;
+    --rc-fs-lg: 15px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    width: 300px;
+    margin: 0;
+    padding: var(--rc-4);
+    background: var(--rc-bg);
+    color: var(--rc-text);
+    font: var(--rc-fs-md) / 1.6 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  }
+  .head { display: flex; align-items: center; gap: var(--rc-2); margin-bottom: var(--rc-3); }
+  .head img { width: 20px; height: 20px; border-radius: 6px; }
+  .head h1 { font-size: var(--rc-fs-lg); margin: 0; font-weight: 600; }
+
+  .switch-wrap { display: flex; flex-direction: column; align-items: center; gap: var(--rc-2); padding: var(--rc-2) 0 var(--rc-3); }
+  .switch {
+    width: 88px; height: 88px; border-radius: var(--rc-r-full);
+    border: 2px solid var(--rc-border); background: var(--rc-surface); color: var(--rc-text-3);
+    font: 600 var(--rc-fs-md) / 1 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    cursor: pointer; transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  }
+  .switch:focus-visible { outline: 2px solid var(--rc-vocab); outline-offset: 3px; }
+  .switch .dot { width: 30px; height: 30px; border-radius: var(--rc-r-full); background: var(--rc-border); transition: background 140ms ease; }
+  .switch[aria-checked="true"] { border-color: var(--rc-vocab); color: var(--rc-text); background: #f0fdf4; }
+  .switch[aria-checked="true"] .dot { background: var(--rc-vocab); }
+  .hint { color: var(--rc-text-2); font-size: var(--rc-fs-sm); text-align: center; }
+
+  .stats { display: flex; gap: var(--rc-2); margin-top: var(--rc-2); }
+  .stat { flex: 1; background: var(--rc-surface); border-radius: var(--rc-r-sm); padding: var(--rc-2) var(--rc-3); }
+  .stat .num { font-size: 20px; font-weight: 600; line-height: 1.2; }
+  .stat .lbl { font-size: var(--rc-fs-sm); color: var(--rc-text-2); }
+
+  .section { margin-top: var(--rc-4); border-top: 1px solid var(--rc-border); padding-top: var(--rc-3); }
+  .section h2 { font-size: var(--rc-fs-sm); color: var(--rc-text-2); font-weight: 600; margin: 0 0 var(--rc-2); }
+
+  /* 热力图：12 周 × 7 天 */
+  .heat { display: flex; gap: 3px; }
+  .heat .week { display: flex; flex-direction: column; gap: 3px; }
+  .heat i { width: 10px; height: 10px; border-radius: 2px; background: #ececef; display: block; }
+  .heat i[data-l="1"] { background: #bbf7d0; }
+  .heat i[data-l="2"] { background: #86efac; }
+  .heat i[data-l="3"] { background: #22c55e; }
+  .heat i[data-l="4"] { background: #15803d; }
+  .heat i[data-today="1"] { outline: 1.5px solid var(--rc-text); outline-offset: 1px; }
+  .legend { display: flex; align-items: center; gap: 4px; margin-top: 6px; color: var(--rc-text-3); font-size: 11px; }
+  .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  .recent { list-style: none; margin: 0; padding: 0; }
+  .recent li { display: flex; justify-content: space-between; gap: var(--rc-2); padding: 5px 0; border-bottom: 1px dashed var(--rc-border); }
+  .recent li:last-child { border-bottom: none; }
+  .recent .t { color: var(--rc-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .recent .n { color: var(--rc-text-3); font-size: var(--rc-fs-sm); flex: none; }
+  .empty { color: var(--rc-text-3); font-size: var(--rc-fs-sm); }
+
+  .clear {
+    margin-top: var(--rc-3); width: 100%; padding: var(--rc-2) var(--rc-3);
+    border-radius: var(--rc-r-sm); border: 1px solid var(--rc-border);
+    background: var(--rc-bg); color: var(--rc-text-2); font: inherit; cursor: pointer;
+  }
+  .clear:hover { background: var(--rc-surface); }
+  @media (prefers-reduced-motion: reduce) { .switch, .switch .dot { transition: none; } }
+</style>
+
+<div class="head">
+  <img src="icons/icon-48.png" alt="" />
+  <h1>Reading Collector</h1>
+</div>
+
+<div class="switch-wrap">
+  <button id="toggle" class="switch" role="switch" aria-checked="false">
+    <span class="dot"></span>
+    <span id="state">关闭</span>
+  </button>
+  <div class="hint" id="hint">关闭时不在页面上响应划词</div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num" id="today">0</div><div class="lbl">今天推送</div></div>
+  <div class="stat"><div class="num" id="week">0</div><div class="lbl">近 7 天</div></div>
+</div>
+
+<div class="section">
+  <h2>活动热力图 · 近 12 周</h2>
+  <div class="heat" id="heat"></div>
+  <div class="legend">
+    少 <i style="background:#ececef"></i><i style="background:#bbf7d0"></i><i style="background:#86efac"></i><i style="background:#22c55e"></i><i style="background:#15803d"></i> 多
+  </div>
+</div>
+
+<div class="section">
+  <h2>最近推送</h2>
+  <ul class="recent" id="recent"></ul>
+</div>
+
+<div class="section">
+  <button class="clear" id="clear">清空所有未推送</button>
+</div>
+
+<script src="popup.js"></script>
