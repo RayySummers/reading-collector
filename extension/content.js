@@ -66,17 +66,44 @@
     return r;
   }
 
+  // 跨段落选择时不能把整段塞进一个 <mark>（会破坏渲染），
+  // 改成按文本节点逐段包裹，所有片段共用同一个 rcId。
   function wrapRange(range, kind, id) {
-    const mark = document.createElement("mark");
-    mark.className = `rc-hl rc-${kind}`;
-    mark.dataset.rcId = id;
-    try {
-      mark.appendChild(range.extractContents());
-      range.insertNode(mark);
-      return mark;
-    } catch (e) {
-      return null;
+    const root = range.commonAncestorContainer;
+    const walker = document.createTreeWalker(
+      root.nodeType === Node.TEXT_NODE ? root.parentNode : root,
+      NodeFilter.SHOW_TEXT,
+      { acceptNode: (n) => (isPageText(n) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT) }
+    );
+    const targets = [];
+    let n;
+    while ((n = walker.nextNode())) {
+      if (!range.intersectsNode(n)) continue;
+      const start = n === range.startContainer ? range.startOffset : 0;
+      const end = n === range.endContainer ? range.endOffset : n.data.length;
+      if (end > start && n.data.slice(start, end).trim()) targets.push([n, start, end]);
     }
+    if (!targets.length) return null;
+
+    const marks = [];
+    for (const [node, start, end] of targets) {
+      try {
+        const r = document.createRange();
+        r.setStart(node, start);
+        r.setEnd(node, end);
+        const mark = document.createElement("mark");
+        mark.className = `rc-hl rc-${kind}`;
+        mark.dataset.rcId = id;
+        if (pageIsDark()) mark.classList.add("rc-dark");
+        if (pageIsInverted()) mark.classList.add("rc-invert-fix");
+        mark.appendChild(r.extractContents());
+        r.insertNode(mark);
+        marks.push(mark);
+      } catch (e) {
+        /* 单个节点失败就跳过 */
+      }
+    }
+    return marks.length ? marks[0] : null;
   }
 
   function sentenceAround(text) {
@@ -247,7 +274,7 @@
       async () => {
         const all = await load();
         await save(all.filter((x) => x.id !== id));
-        mark.replaceWith(...mark.childNodes);
+        document.querySelectorAll(`mark.rc-hl[data-rc-id="${id}"]`).forEach((m) => m.replaceWith(...m.childNodes));
         closePopover();
         toast("已删除");
         refreshPush();
@@ -275,7 +302,7 @@
       },
       async () => {
         await save(all.filter((x) => x.id !== id));
-        mark.replaceWith(...mark.childNodes);
+        document.querySelectorAll(`mark.rc-hl[data-rc-id="${id}"]`).forEach((m) => m.replaceWith(...m.childNodes));
         closePopover();
         toast("已删除");
         refreshPush();
@@ -287,13 +314,14 @@
   document.addEventListener("mouseup", () => {
     setTimeout(() => {
       if (!enabled) return;
-      if (pop) return;
       const sel = window.getSelection();
       const text = sel ? sel.toString().trim() : "";
+      // 没有选中文字（例如只是点了一下已有高亮）→ 不动浮层，否则会把它关掉
       if (!text || text.length > 400 || sel.rangeCount === 0) {
         removeBar();
         return;
       }
+      closePopover(); // 有真实选区时，先收旧浮层再弹工具条
       const range = sel.getRangeAt(0);
       if (!document.body.contains(range.commonAncestorContainer)) return;
       const start = offsetOf(range.startContainer, range.startOffset);

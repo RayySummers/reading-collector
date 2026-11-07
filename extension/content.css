@@ -228,6 +228,24 @@ mark.rc-fact {
 .rc-dark .rc-pop-actions .rc-pop-del { background: #2a1515; color: #fca5a5; border-color: #4c1d1d; }
 .rc-dark .rc-pop-x { color: #a1a1aa; }
 
+
+/* 深色页面：高亮改成半透明高饱和底纹，避免被暗背景吃掉 */
+.rc-dark mark.rc-vocab {
+  background: rgba(34, 197, 94, 0.42);
+  box-shadow: inset 0 -1px 0 rgba(134, 239, 172, 0.85);
+  color: inherit;
+}
+.rc-dark mark.rc-idea {
+  background: rgba(234, 179, 8, 0.42);
+  box-shadow: inset 0 -1px 0 rgba(253, 224, 71, 0.85);
+  color: inherit;
+}
+.rc-dark mark.rc-fact {
+  background: rgba(59, 130, 246, 0.45);
+  box-shadow: inset 0 -1px 0 rgba(147, 197, 253, 0.85);
+  color: inherit;
+}
+
 /* 页面整体被 filter 反色时，给自己的 UI 反向抵消 */
 .rc-invert-fix {
   filter: invert(1) hue-rotate(180deg) !important;
@@ -237,4 +255,14 @@ mark.rc-fact {
   .rc-btn {
     transition: none;
   }
+}
+
+/* 可叠加的「笔记层」：用底纹+下划线，不用实色，避免盖住里面的生词高亮 */
+mark.rc-idea {
+  background: rgba(234, 179, 8, 0.16);
+  box-shadow: inset 0 -2px 0 rgba(234, 179, 8, 0.6);
+}
+.rc-dark mark.rc-idea {
+  background: rgba(234, 179, 8, 0.20);
+  box-shadow: inset 0 -2px 0 rgba(253, 224, 71, 0.7);
 }

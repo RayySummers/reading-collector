@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Reading Collector",
-  "version": "0.5.0",
+  "version": "0.5.5",
   "description": "选中文字 → 网页内浮层做标记/写注 → 读完整篇一键推送到 Obsidian",
   "browser_specific_settings": {
     "gecko": {
