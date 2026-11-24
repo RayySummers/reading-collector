@@ -244,3 +244,241 @@ mark.rc-fact.rc-dark  { background: rgba(59, 130, 246, 0.42); color: #eaf2ff; }
 
 /* 反色页面（页面整体 filter: invert）→ 再翻回来 */
 mark.rc-hl.rc-invert-fix { filter: invert(1) hue-rotate(180deg); }
+
+/* ---------- 右下角按钮栈：推送 / 待恢复 ---------- */
+.rc-dock {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: min(380px, calc(100vw - 24px));
+  font: 13px/1.5 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+.rc-dock .rc-push {
+  position: static;
+}
+
+.rc-pending {
+  border: 1px solid #f59e0b;
+  border-radius: var(--rc-r-full);
+  padding: 8px 14px;
+  background: #fffbeb;
+  color: #92400e;
+  font: 600 12px/1.2 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  box-shadow: var(--rc-shadow-bar);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.rc-pending:hover {
+  background: #fef3c7;
+}
+
+/* 待恢复面板 */
+.rc-restore {
+  width: min(360px, calc(100vw - 40px));
+  max-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: #18181b;
+  border: 1px solid #e4e4e7;
+  border-radius: var(--rc-r-md);
+  box-shadow: var(--rc-shadow-pop);
+  padding: 12px;
+}
+
+.rc-restore-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.rc-restore-x {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  color: #a1a1aa;
+  padding: 2px 4px;
+}
+
+.rc-restore-tip {
+  margin: 0 0 8px;
+  color: #52525b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.rc-restore-list {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  max-height: 46vh;
+}
+
+.rc-restore-item {
+  padding: 9px 0;
+  border-top: 1px dashed #e4e4e7;
+}
+
+.rc-restore-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.rc-restore-kind {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.rc-restore-time {
+  color: #a1a1aa;
+  font-size: 11px;
+}
+
+.rc-restore-text {
+  font-weight: 500;
+  word-break: break-word;
+  max-height: 72px;
+  overflow: auto;
+}
+
+.rc-restore-ctx,
+.rc-restore-note {
+  color: #52525b;
+  font-size: 12px;
+  margin-top: 3px;
+  max-height: 54px;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.rc-restore-note {
+  color: #92400e;
+}
+
+.rc-restore-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.rc-restore-btn {
+  border: 1px solid #e4e4e7;
+  border-radius: var(--rc-r-sm);
+  padding: 5px 10px;
+  background: #f6f6f7;
+  color: #18181b;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.rc-restore-btn:hover {
+  background: #ececef;
+}
+
+.rc-restore-del {
+  color: #b91c1c;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.rc-restore-foot {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid #e4e4e7;
+}
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+  .rc-pending {
+    background: #2a2110;
+    color: #fcd34d;
+    border-color: #7c5a12;
+  }
+  .rc-pending:hover {
+    background: #3a2d13;
+  }
+  .rc-restore {
+    background: #17171a;
+    color: #f2f2f5;
+    border-color: #2e2e33;
+  }
+  .rc-restore-tip,
+  .rc-restore-ctx {
+    color: #b4b4bd;
+  }
+  .rc-restore-note {
+    color: #fcd34d;
+  }
+  .rc-restore-item {
+    border-top-color: #2e2e33;
+  }
+  .rc-restore-btn {
+    background: #232327;
+    color: #f2f2f5;
+    border-color: #3a3a40;
+  }
+  .rc-restore-btn:hover {
+    background: #2e2e33;
+  }
+  .rc-restore-del {
+    background: #2a1515;
+    color: #fca5a5;
+    border-color: #4c1d1d;
+  }
+  .rc-restore-foot {
+    border-top-color: #2e2e33;
+  }
+}
+
+/* 页面级深色（不依赖系统偏好） */
+.rc-dark .rc-pending {
+  background: #2a2110;
+  color: #fcd34d;
+  border-color: #7c5a12;
+}
+.rc-dark .rc-restore {
+  background: #17171a;
+  color: #f2f2f5;
+  border-color: #2e2e33;
+}
+.rc-dark .rc-restore-tip,
+.rc-dark .rc-restore-ctx {
+  color: #b4b4bd;
+}
+.rc-dark .rc-restore-note {
+  color: #fcd34d;
+}
+.rc-dark .rc-restore-item {
+  border-top-color: #2e2e33;
+}
+.rc-dark .rc-restore-btn {
+  background: #232327;
+  color: #f2f2f5;
+  border-color: #3a3a40;
+}
+.rc-dark .rc-restore-btn:hover {
+  background: #2e2e33;
+}
+.rc-dark .rc-restore-del {
+  background: #2a1515;
+  color: #fca5a5;
+  border-color: #4c1d1d;
+}
+.rc-dark .rc-restore-foot {
+  border-top-color: #2e2e33;
+}
